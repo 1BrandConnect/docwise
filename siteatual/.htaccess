@@ -1,0 +1,41 @@
+# BEGIN Redirecionamento para habilitar o SSL
+<IfModule mod_rewrite.c>
+RewriteEngine on
+RewriteCond %{HTTPS} !=on [NC]
+RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/
+RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+</IfModule>
+# END Redirecionamento SSL
+
+
+########### Tornando a versão 'não-www' como padrão ############
+<IfModule mod_rewrite.c>
+RewriteEngine On
+#RewriteCond %{HTTP_HOST} ^www\.
+#RewriteRule ^(.*)$ https://docwise.com.br/$1 [R=301,L]
+RewriteCond %{HTTP_HOST} ^www.docwise.com.br [NC]
+RewriteRule ^(.*)$ https://docwise.com.br/$1 [L,R=301]
+</IfModule>
+
+
+# BEGIN WordPress
+# As diretrizes (linhas) entre "BEGIN WordPress" e "END WordPress" são
+# geradas dinamicamente e só devem ser modificadas através de filtros do WordPress.
+# Quaisquer alterações nas diretivas entre esses marcadores serão sobrescritas.
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+</IfModule>
+
+# END WordPress
+
+
+
+# BOTANDO O SITE EM MODO DE MANUTENCAO
+#	DirectoryIndex manutencao.html index.php
+Redirect 301 /solucoes.html /
